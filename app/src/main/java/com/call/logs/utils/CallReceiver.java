@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.call.logs.app.AppController;
-import com.call.logs.models.CallLogs;
 import com.call.logs.database.CallLogsTable;
+import com.call.logs.models.CallLogs;
 
 import java.util.Date;
 
@@ -14,12 +14,12 @@ public class CallReceiver extends PhoneCallReceiver {
     @Override
     protected void onIncomingCallStarted(Context ctx, String number, Date start) {
         Toast.makeText(ctx, "IncomingCallStarted :" + number, Toast.LENGTH_SHORT).show();
+        addToCallLogsTable(number);
+    }
 
-        CallLogsTable callLogsTable = new CallLogsTable(AppController.getInstance());
-        callLogsTable.insertCallLog(new CallLogs(number, DateUtils.getIncomingCallTime()));
-        if (!AppController.isAppForeGrounded()) {
-            openApp(AppController.getInstance());
-        }
+    @Override
+    protected void onIncomingCallAttended(Context ctx, String number, Date start) {
+        Toast.makeText(ctx, "IncomingCallAttended :" + number, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -46,7 +46,8 @@ public class CallReceiver extends PhoneCallReceiver {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                String packageName = AppController.getAppPackageName();
+                //String packageName = AppController.getAppPackageName();
+                String packageName = "com.who_cookin";
                 if (context != null) {
                     context.startActivity(context.getPackageManager().getLaunchIntentForPackage(packageName));
                 }
@@ -54,5 +55,12 @@ public class CallReceiver extends PhoneCallReceiver {
         }, 2000);
     }
 
+    private void addToCallLogsTable(String number) {
+        CallLogsTable callLogsTable = new CallLogsTable(AppController.getInstance());
+        callLogsTable.insertCallLog(new CallLogs(number, DateUtils.getIncomingCallTime()));
+        if (!AppController.isAppForeGrounded()) {
+            openApp(AppController.getInstance());
+        }
+    }
 
 }

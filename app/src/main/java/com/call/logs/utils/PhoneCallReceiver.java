@@ -52,6 +52,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     protected void onIncomingCallStarted(Context ctx, String number, Date start) {
     }
 
+    protected void onIncomingCallAttended(Context ctx, String number, Date start) {
+
+    }
+
     protected void onOutgoingCallStarted(Context ctx, String number, Date start) {
     }
 
@@ -86,6 +90,11 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     isIncoming = false;
                     callStartTime = new Date();
                     onOutgoingCallStarted(context, savedNumber, callStartTime);
+                } else {
+                    if (isIncoming) {
+                        callStartTime = new Date();
+                        onIncomingCallAttended(context, savedNumber, callStartTime);
+                    }
                 }
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
